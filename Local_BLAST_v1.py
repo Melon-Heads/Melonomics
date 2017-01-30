@@ -14,8 +14,14 @@
 # The function to BLAST a fasta file.
 def blastFastaFile (fastaFile):
 	blastall -i fastafile -d nt -p blastn -b 10 -m 8 > blast.out
-	blastall -i Example.fasta -d nt -p blastn -b 10 -m 7 -o "Local_Blast_Output.xml" # This produces an XML file instead.
-
+	blastall -i Example.fasta -d nt -p blastn -b 1 -m 7 -o "Local_Blast_Output.xml" # This produces an XML file instead.
+# Parameters for blastall:
+# -i = The input fasta file. This can be changed to a variable.
+# -d = The type of database to be compared against, described above.
+# -p = The type of blast carried out - blastn is for nucleotides.
+# -b = The number of results you want to show.
+# -m = The format of the output file (7 = XML, 8 = Tabular)
+# -o = The name of the output file.
 
 
 
