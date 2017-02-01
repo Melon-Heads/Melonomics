@@ -59,12 +59,15 @@ FPKMval_2 = [1092.1, 44.2, 2.78, 1.02, 0.45]
 
 datMat = np.matrix(zip(genAcc, FPKMval, FPKMval_2))
 print datMat
+MatCSV = pd.DataFrame(datMat)
 
 
 #####################
 # Making a CSV File #
 #####################
 
+
+MatCSV.to_csv('Gene_FPKM_Sample.csv')
 
 #zip(genAcc, FPKMval)
 #with open("BLAST_Output.csv", "w") as csvfile:
