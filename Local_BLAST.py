@@ -1,9 +1,15 @@
-#!/usr/bin/env/python
+#!/usr/bin/env/ python
+
+import sys
+sys.path.append('/mnt/c/Users/Nadim/Downloads/biopython-1.68')
+
+from Bio.Blast.Applications import NcbiblastnCommandline
 
 
 ###########################
 #       Local BLAST       #
 ###########################
+
 
 
 # This script REQUIRES:
@@ -20,20 +26,29 @@
 # ------------------ 
 # | BLAST Function | 
 # ------------------ 
-def blastFastaFile(fastaFile):
-        blastall -i fastaFile -d nt -p blastn -b 1 -m 7 -o fastaFile"_Output.xml"
+
+
+#def blastFastaFile(fastaFile):
+       # blastall -i fastaFile -d nt -p blastn -b 1 -m 7 -o fastaFile"_Output.xml"
+
+
+def fastaBLAST(fastaFile):
+	blastn_cline = NcbiblastnCommandline(query=fastaFile, db="nt", evalue=0.001, outfmt=6, out=fastaFile+"_Output.txt", max_target_seqs=1)
+	blastn_cline
+	print(blastn_cline)
+	stdout, stderr = blastn_cline()
+
 
 # Parameters for blastall:
-# --> -i [Input fasta file]
-# --> -d [Database to compare against]
+# --> -i or query [Input fasta file]
+# --> -d or db [Database to compare against]
 # --> -p [Type of blast carried out (blastn for nucleotides)]
-# --> -b [Number of hits to show]
-# --> -m [Format of the output file (7 = XML, 8 = Tabular)]
+# --> -b or max_target_seqs [Number of hits to show]
+# --> -m [Format of the output file (Non-command line: 7 = XML, 8 = Tabular; Command line = 5, 6 respectively)]
 # --> -o [Name of output file]
 
 
-
 # The function is called with files passed through:
-blastFastaFile('0hourR1.txt')
-blastFastaFile('24hourR1.txt')
-blastFastaFile('8hourR1.txt')
+fastaBLAST('0hourR1.fasta')
+fastaBLAST('24hourR1.fasta')
+fastaBLAST('8hourR1.fasta')

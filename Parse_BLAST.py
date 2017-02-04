@@ -55,9 +55,9 @@ def dictToMatrix(dict):
 # Passing filenames of BLAST output to the function, creating a dictionary.
 # The dictionary can be used to generate a matrix.
 # This matrix can be saved to a CSV file.
-createDict('0hourR1_Output.txt')
-createDict('8hourR1_Output.txt')
-createDict('24hourR1_Output.txt')
+createDict('0hourR1.fasta_Output.txt')
+createDict('8hourR1.fasta_Output.txt')
+createDict('24hourR1.fasta_Output.txt')
 
 dictToMatrix(samDict)
 
