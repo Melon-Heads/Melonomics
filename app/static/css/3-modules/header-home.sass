@@ -1,0 +1,126 @@
+.header
+  background-image: url(../img/header-img-min.png)
+  background-size: cover
+  background-position: center center
+  background-attachment: scroll
+  min-height: 22rem
+  position: relative
+  margin-top: 1rem
+
+.header
+  h1
+    font-family: 'querroundregular', 'helvetica', 'arial'
+    text-align: center
+    +clearfix
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    text-align: center
+    line-height: 2em
+    color: $white
+    font-size: 1.4rem
+    font-weight: 300
+
+.pos-button
+  position: absolute
+  display: block
+  width: 65%
+  bottom: 5%
+  left: 50%
+  transform: translateX(-50%)
+
+nav
+  display: none
+
+.pos-fixed
+  position: fixed
+  width: 100%
+  background-color: white
+  z-index: 2
+  height: 70px
+  margin-top: -1em
+
+.mobile-nav
+  ul
+    text-align: center
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    li
+      padding-bottom: 2rem
+      a
+        font-size: 2rem
+
+#rel
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  width: 100%
+  height: 100%
+  background-color: rgba(255,255,255,0.9)
+  color: $a-blue
+  z-index: 999
+  display: none
+
+
+  a
+    color: $a-blue
+    font-weight: bold
+    &:hover
+      color: lighten($a-blue, 10%)
+
+.fa-times
+  position: absolute
+  top: 3%
+  bottom: 0
+  left: 80%
+  right: 0
+  cursor: pointer
+  font-size: 2.5em !important
+  @media only screen and (min-width: 390px)
+    left: 90%
+.fa-bars
+  cursor: pointer
+
+// for when scrolled down the header and links change color etc
+
+.scrolled
+  color: white
+
+  &:hover
+      color: darken(white, 10%)
+
+
+
+
+// media queries, there's an line media query above aswell ^^
+
+@media only screen and (min-width: 480px)
+  .pos-button
+    width: 40%
+
+@media only screen and (min-width: 850px)
+  h1
+    white-space: nowrap
+  .pos-button
+    width: 20%
+    bottom: 20% !important
+
+@media only screen and (min-width: 1200px)
+  .pos-button
+  width: 15%
+
+@media only screen and (min-width: 640px)
+  .header
+    background-attachment: fixed
+    height: 100vh
+
+
+    h1
+      font-size: 1.5rem
+  .pos-button
+    bottom: 10%
