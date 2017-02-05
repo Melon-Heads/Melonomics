@@ -1,0 +1,34 @@
+.contact-cta
+  padding: 1rem
+  background-color: $a-blue
+  +clearfix
+  a
+    color: white
+    &:hover, &:focus
+      color: darken($white, 5%)
+
+
+  h2, p
+    color: white
+    text-align: center
+.home-contact
+  width: 60%
+  margin: 0 auto
+
+
+@media only screen and (min-width: 480px)
+  .home-contact
+    width: 40%
+
+@media (min-width: 480px) and (max-width: 500px)
+  .contact-cta
+    margin-top: -1rem
+
+
+@media only screen and (min-width: 750px)
+  .home-contact
+    width: 20%
+
+@media only screen and (min-width: 1024px)
+  .home-contact
+    width: 15%

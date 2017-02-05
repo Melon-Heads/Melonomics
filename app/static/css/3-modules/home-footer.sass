@@ -1,0 +1,59 @@
+footer
+  background-color: #cbcbcb
+  min-height: 8em
+  width: 100%
+
+.copyright
+
+  ul
+    float: none
+    display: block
+  li
+    display: block
+    text-align: center
+  a
+    color: white
+    &:hover
+      color: darken(white, 10%)
+  p
+    color: white
+    text-align: center
+
+
+
+
+
+@media only screen and (min-width: 800px)
+  .copyright
+    text-align: center
+    white-space: nowrap
+    color: white
+    position: relative
+    p
+      line-height: 8em
+      height: 8em
+      float: left
+      width: 30%
+
+    ul
+      line-height: 8em
+      height: 8em
+      float: right
+      width: 70%
+    li
+      padding-right: 3rem
+      display: inline-block
+      float: right
+
+      &:first-child
+        padding-right: 0
+
+
+
+
+
+
+
+// experimental w/ port grid
+.opacity-img
+  opacity: 1

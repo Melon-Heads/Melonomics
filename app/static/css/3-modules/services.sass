@@ -1,0 +1,88 @@
+.services
+  padding-top: 1rem
+h2
+  text-align: center
+  margin: 1rem 0
+
+h4
+  text-align: center
+
+.responsive-svg, .branding-svg, .digi-ad-svg
+  width: 250px
+  height: 250px
+  margin: 0 auto
+  display: block
+  overflow: hidden
+
+.branding
+  h4
+    margin-top: -1.5rem
+  .branding-svg
+    height: 240px
+    width: 240px
+    padding-bottom: 3rem
+    margin-top: 2rem
+
+.digi-ad
+  h4
+    margin-top: -1rem
+  .digi-ad-svg
+    padding-bottom: 2rem
+    margin-top: 1rem
+
+.img-container
+  max-height: 300px
+  overflow: hidden
+  position: relative
+
+.portfolio
+  +clearfix
+  h2
+    margin: 3rem 0
+
+  .bit-4
+    padding: 0
+  img
+    width: 100%
+    transition: all 0.3s ease-in-out
+
+.overlay
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  height: 100%
+  width: 100%
+  background-color: rgba($black, 0.5)
+  opacity: 0
+  transform: translate3d( 0, 0, 0)
+  transition: all 0.3s ease-in-out
+  transform: scale(0.9)
+  &:hover, &:focus
+    opacity: 1
+    transform: scale(1.1)
+
+
+
+
+  h4
+    position: absolute
+    top: 50%
+    bottom: 0
+    left: 0
+    right: 0
+    color: white
+
+  p
+    position: absolute
+    bottom: 0
+    left: 0
+    right: 0
+    transform: translateY(-50%)
+    text-align: center
+    white-space: no-wrap
+    a
+      color: white
+      &:hover &:focus &:active
+        color: darken(white, 20%)
