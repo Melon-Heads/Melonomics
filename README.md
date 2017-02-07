@@ -9,7 +9,7 @@ The app folder should consist of static, template and data folders. Additionally
 
 Additionally directly inside the app folder (so along with the folders mentioned above), you need the BLAST.py and final.py scripts.
 
-This is the file hierarchy:
+This is the file hierarchy: 
 
 |- app
 |
@@ -24,3 +24,5 @@ This is the file hierarchy:
 |- BLAST.py
 |
 |- final.py
+
+To see this file hierarchy properly, click edit and for this README file.
