@@ -111,3 +111,8 @@ ggplotly(loadings)
 ##################
 
 #see above
+
+
+
+###OTHER NOTES
+#ability to save graphs not enable here, will be added when rpy2 in python is enabled
