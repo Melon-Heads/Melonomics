@@ -28,6 +28,7 @@ View(sample)
 ##################################
 
 hc <- hclust(dist(sample))
+pdf('HCA.pdf')
 plot(hc, hang = -1)
 
 
@@ -35,6 +36,7 @@ plot(hc, hang = -1)
 #  HEATMAP  #
 #############
 
+pdf('heatmap.pdf')
 pheatmap(sample, color=colorRampPalette(c("yellow","yellow2","greenyellow","green","aquamarine","turquoise","steelblue","navy"))(100))
 
 
@@ -43,10 +45,9 @@ pheatmap(sample, color=colorRampPalette(c("yellow","yellow2","greenyellow","gree
 #########
 
 #calculate PCs, 
-log.sample<-log(sample+0.1) # +0.1 needed to log transform samples of equal to 0.
-sample.gene<-sample[,1]
-sample.pca<-prcomp(log.sample, center = TRUE, scale. = TRUE)
-print(sample.pca)
+log.sample <- log(sample+0.1) # +0.1 needed to log transform samples of equal to 0.
+sample.gene <- sample[,1]
+sample.pca <- prcomp(log.sample, center = TRUE, scale. = TRUE)
 
 #summarise PCA for further analysis
 s<-summary(sample.pca)
@@ -57,47 +58,49 @@ cumVar <- as.data.frame(cumVar)
 
 #calculate explained variance 
 expVar <- s$importance[2,] * 100
-expVar<-as.data.frame(expVar)
+expVar <- as.data.frame(expVar)
 
 #count for number of principle components
-no.rows<-nrow(expVar)
+no.rows <- nrow(expVar)
 
 #create data frame with all variance info, including column for number of components
-expVar["cumVar"]<-NA
-expVar["Component"]<-c(1:no.rows)
-expVar$cumVar<- cumVar$cumVar
-expVar
+expVar["cumVar"] <- NA
+expVar["Component"] <- c(1:no.rows)
+expVar$cumVar <- cumVar$cumVar
 
 #plot combined variance graph using plotly
-x<-list(
+x <- list(
   autotick=FALSE,
   tick0=0,
   dtick=5,
   tickangle=0
 )
-y<-list(
+y <- list(
   title="Variance(%)",
   autotick=FALSE,
   tick0=0,
   dtick=10
 )
-e<-plot_ly(expVar, x=~Component)%>%
+var.plot <- plot_ly(expVar, x=~Component)%>%
   add_trace(y=~cumVar, type="scatter", name="Cumulative Variance", mode="lines", line=list(color="rgb(205, 12, 24)"))%>%
   add_trace(y=~expVar, type="scatter", name="Explained Variance", mode="lines", line=list(color ="rgb(22, 96, 167)"))%>%
   layout(xaxis=x, yaxis=y,legend=list(x=0.7,y=0.15))
-ggplotly(e)
+ggplotly(var.plot)
+htmlwidgets::saveWidget(var.plot, "variance.html")
 
 #plot graph comparing PCs
-Xscores<-sample.pca$x 
-Xscores<-as.data.frame(Xscores)
-scores<-plot_ly(Xscores, x=~PC1, y=~PC2, type="scatter", mode="markers")
+Xscores <- sample.pca$x 
+Xscores <- as.data.frame(Xscores)
+scores <- plot_ly(Xscores, x=~PC1, y=~PC2, type="scatter", mode="markers")
 ggplotly(scores)
+htmlwidgets::saveWidget(scores, "PCAscores.html")
 
 #plot graph showing PC loadings
-Xloadings<-sample.pca$rotation
-Xloadings<-as.data.frame(Xloadings)
-loadings<-plot_ly(Xloadings, x=~PC1, y=~PC2, type="scatter")
+Xloadings <- sample.pca$rotation
+Xloadings <- as.data.frame(Xloadings)
+loadings <- plot_ly(Xloadings, x=~PC1, y=~PC2, type="scatter")
 ggplotly(loadings)
+htmlwidgets::saveWidget(loadings, "PCAloadings.html")
 
 ########################
 #  TABLE OF TOP GENES  #
