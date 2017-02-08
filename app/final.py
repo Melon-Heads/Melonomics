@@ -26,7 +26,15 @@ def software():
 @app.errorhandler(404)
 def error(e):
 	return render_template ('error.html')	
-	
+
+
+@app.route("/Blast/")
+def Blast(name=None):
+    import BLAST
+    print("Completed BLAST, waiting for Analysis!")
+    return render_template("Blast.html")
+
+
 ####################################################
 @app.route("/analyse/")
 def index():
