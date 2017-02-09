@@ -13,7 +13,7 @@ colnames(sample)[2] <- "Ohour"
 colnames(sample)[3] <- "24hour"
 colnames(sample)[4] <- "8hour"
 
-geneNames<-as.character(sample$X)
+geneNames <- as.character(sample$X)
 
 # select required data and convert to matrix
 sample <- sample[,2:4]
@@ -30,6 +30,7 @@ View(sample)
 hc <- hclust(dist(sample))
 pdf('HCA.pdf')
 plot(hc, hang = -1)
+dev.off()
 
 
 #############
@@ -38,7 +39,7 @@ plot(hc, hang = -1)
 
 pdf('heatmap.pdf')
 pheatmap(sample, color=colorRampPalette(c("yellow","yellow2","greenyellow","green","aquamarine","turquoise","steelblue","navy"))(100))
-
+dev.off()
 
 #########
 #  PCA  #
@@ -117,5 +118,3 @@ htmlwidgets::saveWidget(loadings, "PCAloadings.html")
 
 
 
-###OTHER NOTES
-#ability to save graphs not enable here, will be added when rpy2 in python is enabled
