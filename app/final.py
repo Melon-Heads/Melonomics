@@ -1,8 +1,5 @@
-import os, sys
-from flask import Flask, render_template, request, url_for, redirect, send_file
-import StringIO
-
-sys.path.append(r'c:\Python')
+import os
+from flask import Flask, render_template, request, url_for, redirect
 
 app = Flask(__name__)
 
@@ -29,27 +26,7 @@ def software():
 @app.errorhandler(404)
 def error(e):
 	return render_template ('error.html')	
-
-
-@app.route("/Blast/")
-def Blast(name=None):
-    import BLAST
-    print("Completed BLAST, waiting for Analysis!")
-    return render_template("Blast.html")
-
-
-# This shows a template which consists of a button to allow users to view R analysis.
-@app.route("/R_Downloads/")
-def R_Downloads():
-    return render_template("Rdownloads.html")
-
-
-# This displays a pdf of R analysis on the screen.
-@app.route("/return_file/")
-def returnFile():
-    return send_file("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/HCA.pdf", attachment_filename="HCA.pdf")
-
-
+	
 ####################################################
 @app.route("/analyse/")
 def index():
