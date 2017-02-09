@@ -1,8 +1,9 @@
 #!/usr/bin/env/ python
 
-import sys, re, csv
+import sys, re, csv, os
+
+# The following is for those who need to append biopython packages to the Python PATH:
 sys.path.append('/mnt/c/Users/Nadim/Downloads/biopython-1.68')
-#sys.path.append('biopython-1.68')
 
 import pandas as pd
 from Bio.Blast.Applications import NcbiblastnCommandline
@@ -17,9 +18,9 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 # This script REQUIRES:
 # --> BLAST+ (downloadable from: https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 # --> A BLAST database (using nt for nucleotides), downloadable from: ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/.
-# --> BioPython
+# --> Biopython
 
-# Once the database has been downloaded, it must be formatted:
+# If a database is downloaded, it must be formatted:
 #              formatdb - i nt -p F -V
 # -p F [Format according to nucleotides]
 # -V [Verbose]
@@ -37,7 +38,7 @@ def fastaBLAST(fastaFile):
         stdout, stderr = blastn_cline()
 
 
-# Parameters for blastall and command line:
+# Parameters for blastall and command line blast:
 # --> -i or query [Input fasta file]
 # --> -d or db [Database to compare against]
 # --> -p [Type of blast carried out (blastn for nucleotides)]
@@ -51,6 +52,7 @@ def fastaBLAST(fastaFile):
 # ------------------------------------------------------------
 # | Obtaining the Gene IDs and FPKM Values from BLAST Output |
 # ------------------------------------------------------------
+
 
 samDict = {} # This needs to be global to add multiple blast results.
 
@@ -79,7 +81,6 @@ def createDict(blastOut):
         genFPKM.update(zip(genAcc, FPKM))
         # Join the gene ID and FPKM dictionary to a separate dictionary which specifies each sample.
         samDict.update({blastOut: genFPKM})
-        #print samDict
 
 
 
@@ -94,15 +95,23 @@ def dictToMatrix(dict):
         matCSV.to_csv('Gene_FPKM_Sample.csv')
 
 
+
+# Look inside the data folder to BLAST all contents and create a dictionary.
+for file in os.listdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data"):
+	if file.endswith(".fasta"):
+		fastaBLAST(file)
+		createDict(file)
+
+
 # Functions to BLAST uploaded files:
-fastaBLAST('0hourR1.fasta')
-fastaBLAST('24hourR1.fasta')
-fastaBLAST('8hourR1.fasta')
+#fastaBLAST('0hourR1.fasta')
+#fastaBLAST('24hourR1.fasta')
+#fastaBLAST('8hourR1.fasta')
 
 # Functions to process the BLAST output:
-createDict('0hourR1.fasta_Output.txt')
-createDict('8hourR1.fasta_Output.txt')
-createDict('24hourR1.fasta_Output.txt')
+#createDict('0hourR1.fasta_Output.txt')
+#createDict('8hourR1.fasta_Output.txt')
+#createDict('24hourR1.fasta_Output.txt')
 
 dictToMatrix(samDict)
 
