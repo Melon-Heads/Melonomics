@@ -26,7 +26,8 @@ def software():
 @app.errorhandler(404)
 def error(e):
 	return render_template ('error.html')	
-
+#This route is call upon when all 3 type files are submitted
+#route calls on the BLAST pyhton script and run analysis
 @app.route("/Blast/")
 def Blast(name=None):
 	import BLAST
@@ -44,14 +45,15 @@ def returnFile():
 	return send_file("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/HCA.pdf", attachment_filename="HCA.pdf")
 
 
-####################################################
+#this route ask for input files control files and save in CTRL folder
 @app.route("/analyse/")
 def index():
     return render_template("upload.html")
 
 @app.route("/upload", methods=['POST'])
 def upload():
-    target = os.path.join(APP__ROOT, 'data/')
+    #creates the CTRL folder in this path saves file
+    target = os.path.join(APP__ROOT, 'data/CTRL')
     print(target)
 
     if not os.path.isdir(target):
@@ -63,13 +65,15 @@ def upload():
         destination = "/".join([target, filename])
         print(destination)
         file.save(destination)
-
+        #after file saving returns to form for second DS1 uploads
     return render_template("upload2.html")
 
-######################################################
+#This route ask for input files for 8hrs infection files and saves in DS1 folder
+
 @app.route("/jss", methods=['POST'])
 def jss():
-    target = os.path.join(APP__ROOT, 'data/')
+    #creates the DS1 folder in this path and saves files
+    target = os.path.join(APP__ROOT, 'data/DS1')
     print(target)
 
     if not os.path.isdir(target):
@@ -81,11 +85,16 @@ def jss():
         destination = "/".join([target, filename])
         print(destination)
         file.save(destination)
+        #files will be saved and the form for DS2 will be returned
     return render_template("upload3.html")
-########################################################
+
+
+#This route ask for input files for 8hrs infection files and saves in DS2 folder
+
 @app.route("/blast", methods=['POST'])
 def blast():
-    target = os.path.join(APP__ROOT, 'data/')
+    #create DS2 folder if not exist and save files
+    target = os.path.join(APP__ROOT, 'data/DS2')
     print(target)
 
     if not os.path.isdir(target):
@@ -97,6 +106,8 @@ def blast():
         destination = "/".join([target, filename])
         print(destination)
         file.save(destination)
+        #The uploaded files are then returned to the function with blast file
+
     return "This will call on function where the analysis takes place"
 
 #This is an alternative method of saving files that we may try later
