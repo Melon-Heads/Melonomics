@@ -1,4 +1,13 @@
+######## Melonomics Software Development Project############
+# for: QMUL MSc Bioinformatics
+#Name: Melon Group (Modupeh Betts, Nadim Rahman, Maddy Rhodes, Andrew Knowles)
+#Date: Submitted for assement 17/2/17
+
+
+
+#imports python os package to enable access to the sub-modules such as os.path specifying file saving path
 import os
+#imports modules of flask that are required
 from flask import Flask, render_template, request, url_for, redirect
 
 app = Flask(__name__)
@@ -27,7 +36,7 @@ def software():
 def error(e):
 	return render_template ('error.html')	
 #This route is call upon when all 3 type files are submitted
-#route calls on the BLAST pyhton script and run analysis
+#route calls on the BLAST pyhton script and runs analysis
 @app.route("/Blast/")
 def Blast(name=None):
 	import BLAST
@@ -89,7 +98,7 @@ def jss():
     return render_template("upload3.html")
 
 
-#This route ask for input files for 8hrs infection files and saves in DS2 folder
+#This route ask for input files for 8hrs infection files and saves in DS2 folder in POST
 
 @app.route("/blast", methods=['POST'])
 def blast():
