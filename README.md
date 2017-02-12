@@ -22,6 +22,7 @@ To run the software, you will need:
   
 
 ===================================================================================
+
 This is the file hierarchy (Apologies if this does not show in the correct format):
 
 app
@@ -38,6 +39,7 @@ app
   L BLAST.py
   |
   L final.py
+  
 ===================================================================================
 
 
