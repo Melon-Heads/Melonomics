@@ -1,35 +1,66 @@
 # INSTALL PACKAGES
-install.packages("pheatmap", repos = "https://cran.ma.imperial.ac.uk/")
-install.packages("plotly", repos = "https://cran.ma.imperial.ac.uk/")
-install.packages("dendextend",repos = "https://cran.ma.imperial.ac.uk/")
+#install.packages("pheatmap")
+#library("pheatmap")
+
+install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
+library("plotly")
+
+install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
+library("gplots")
+
+install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
+library("dendextend")
+
+install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
+library("DT")
+
 source("http://bioconductor.org/biocLite.R") 
 library("limma")
 
+
 #import data
-sample <- read.table("sample_file.csv", header=TRUE, sep=",")
+sample <- read.table("Gene_FPKM_Sample.csv", header=TRUE, sep=",")
 
-#edit column names  (just using for sample file, will change later)
-colnames(sample)[2] <- "Ohour"
-colnames(sample)[3] <- "24hour"
-colnames(sample)[4] <- "8hour"
-
+#select gene names 
 geneNames <- as.character(sample$X)
 
 # select required data and convert to matrix
-sample <- sample[,2:4]
+cols <- ncol(sample)
+sample <- sample[,2:cols]
 sample <- as.matrix(sample)
 
-#change row names to genes names
+#edit row and column names to genes names and class vector 
+classVector <- as.character(sample[1,])
 rownames(sample) <- geneNames
-View(sample)
+colnames(sample) <- classVector
+
+#remove first row of data (unnecessary)
+sample1 <- sample[-1,] #(keeping sample file with line of data too because volcano plot doesn't work without it)
+pClass <- as.factor(colnames(sample1))
+
+levels(pClass)[levels(pClass)=="1"] <- "One"
+levels(pClass)[levels(pClass)=="2"] <- "Two"
+levels(pClass)[levels(pClass)=="3"] <- "Three"
+
+index1 <- which((pClass=="One")==TRUE)
+index2 <- which((pClass=="Two")==TRUE)
+index3 <- which((pClass=="Three")==TRUE)
+
+colour <- NULL
+colour[index1] <- "red"
+colour[index2] <- "navy"
+colour[index3] <- "darkgreen"
 
 ##################################
 #  HIERACHICAL CLUSTER ANALYSIS  #
 ##################################
 
-hc <- hclust(dist(sample))
+hc <- hclust(dist(t(sample1)))
+dend <- as.dendrogram(hc)
+colourCodes <- c(Zero="red", One="navy", Two="darkgreen")
+labels_colors(dend) <- colourCodes[pClass][order.dendrogram(dend)]
 pdf('HCA.pdf')
-plot(hc, hang = -1)
+plot(dend)
 dev.off()
 
 
@@ -38,18 +69,16 @@ dev.off()
 #############
 
 pdf('heatmap.pdf')
-pheatmap(sample, color=colorRampPalette(c("yellow","yellow2","greenyellow","green","aquamarine","turquoise","steelblue","navy"))(100))
+heatmap.2(sample1, bg=colour, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none",trace="none",cexCol=0.7, cex=0.7, colCol=colour)
 dev.off()
-
 
 #########
 #  PCA  #
 #########
 
 #calculate PCs, 
-log.sample <- log(sample+0.1) # +0.1 needed to log transform samples of equal to 0.
-sample.gene <- sample[,1]
-sample.pca <- prcomp(log.sample, center = TRUE, scale. = TRUE)
+log.sample <- log(sample1+0.1) # +0.1 needed to log transform samples of equal to 0.
+sample.pca <- prcomp(t(log.sample), center = TRUE)
 
 #summarise PCA for further analysis
 s<-summary(sample.pca)
@@ -74,7 +103,7 @@ expVar$cumVar <- cumVar$cumVar
 x <- list(
   autotick=FALSE,
   tick0=0,
-  dtick=5,
+  dtick=2,
   tickangle=0
 )
 y <- list(
@@ -84,38 +113,60 @@ y <- list(
   dtick=10
 )
 var.plot <- plot_ly(expVar, x=~Component)%>%
-  add_trace(y=~cumVar, type="scatter", name="Cumulative Variance", mode="lines", line=list(color="rgb(205, 12, 24)"))%>%
-  add_trace(y=~expVar, type="scatter", name="Explained Variance", mode="lines", line=list(color ="rgb(22, 96, 167)"))%>%
+  add_trace(y=~cumVar, type="scatter", name="Cumulative PCA", mode="lines", line=list(color="rgb(205, 12, 24)"))%>%
+  add_trace(y=~expVar, type="scatter", name="PCA", mode="lines", line=list(color ="rgb(22, 96, 167)"))%>%
   layout(xaxis=x, yaxis=y,legend=list(x=0.7,y=0.15))
 ggplotly(var.plot)
+
+#save variance plot
 htmlwidgets::saveWidget(var.plot, "variance.html")
 
 #plot graph comparing PCs
 Xscores <- sample.pca$x 
 Xscores <- as.data.frame(Xscores)
-scores <- plot_ly(Xscores, x=~PC1, y=~PC2, type="scatter", mode="markers")
+scores <- plot_ly(Xscores,x=~PC1, y=~PC2, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=~classVector)
 ggplotly(scores)
+
+#save PC plot
 htmlwidgets::saveWidget(scores, "PCAscores.html")
 
-#plot graph showing PC loadings
-Xloadings <- sample.pca$rotation
-Xloadings <- as.data.frame(Xloadings)
-loadings <- plot_ly(Xloadings, x=~PC1, y=~PC2, type="scatter")
-ggplotly(loadings)
-htmlwidgets::saveWidget(loadings, "PCAloadings.html")
+#carry out tests to figure out top genes and for volcano plots
+biocLite("limma")
+design <-model.matrix(~0+pClass)
 
-########################
-#  TABLE OF TOP GENES  #
-########################
+#test for top genes
+fit <-lmFit(sample, design)
+contrasts <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
+fit <-contrasts.fit(fit, contrasts)
+fit <-eBayes(fit)
 
-#currently work in progress, waiting for something from Nadim 
+#create table of top genes
+toptable <-topTable(fit, sort.by="p", number=250)
 
+#create log function for using volcano plot (see below)
+lg<- -log10(toptable$P.Value)
 
 ##################
 #  VOLCANO PLOT  #
 ##################
 
-#see above
+volcano <- plot_ly(toptable, x=~logFC, y=~lg, type="scatter", mode="markers", text = ~paste('GENE: ', geneNames), marker=list(color="hotpink"))%>%
+  layout(xaxis=list(range=c(-2,2)), yaxis=list(title="-log10(P Value)"))
+ggplotly(volcano)
+
+#save volcano plot
+htmlwidgets::saveWidget(volcano, "volcanoplot.html")
+
+########################
+#  TABLE OF TOP GENES  #
+########################
+
+datatable(toptable)
+
+#save table
+htmlwidgets::saveWidget(toptable, "toptable.html")
+
+
 
 
 
