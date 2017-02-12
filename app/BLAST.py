@@ -9,6 +9,9 @@ import pandas as pd
 from Bio.Blast.Applications import NcbiblastnCommandline
 
 
+# Note that all code specifying file path will have to be adapted.
+
+
 ###########################
 #       Local BLAST       #
 ###########################
@@ -99,15 +102,16 @@ def dictToMatrix(dict):
         mat = pd.DataFrame(dict)
 	matCSV = mat.fillna(0) # This converts empty cells to display 0.
 	
-	# Another matrix with the class vector mentioned in the second row.		
+	# Another matrix with the class vector mentioned in the second row.
+	# This was added as a list, which was formed in the createDict function.		
 	vec = pd.DataFrame(dict)
         vec.loc[1] = vecList	
 	vec = vec.sort()
 	vecCSV = vec.fillna(0)
 
 	# Create the CSV files.
-        matCSV.to_csv('Gene_FPKM_Sample.csv')
-	vecCSV.to_csv('Class_Vector.csv')
+        matCSV.to_csv('/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/Gene_FPKM_Sample.csv')
+	vecCSV.to_csv('/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/Class_Vector.csv')
 
 
 # ===================================================================== #
@@ -119,24 +123,24 @@ def dictToMatrix(dict):
 # The BLAST output files are utilised to create a dictionary which will be used to make a matrix.
 
 os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/CTRL")
-for file in glob.glob("*.fasta"):
-	fastaBLAST(file)
+#for file in glob.glob("*.fasta"):
+	#fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	CTRLcode = 1
 	createDict(file, CTRLcode)
 
 
 os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/DS1")
-for file in glob.glob("*.fasta"):
-	fastaBLAST(file)
+#for file in glob.glob("*.fasta"):
+	#fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	DS1code = 2
 	createDict(file, DS1code)
 
 
 os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/DS2")
-for file in glob.glob("*.fasta"):
-        fastaBLAST(file)
+#for file in glob.glob("*.fasta"):
+        #fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	DS2code = 3
 	createDict(file, DS2code)
