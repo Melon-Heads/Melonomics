@@ -116,7 +116,7 @@ var.plot <- plot_ly(expVar, x=~Component)%>%
 ggplotly(var.plot)
 
 #save variance plot
-htmlwidgets::saveWidget(var.plot, "variance.html")
+htmlwidgets::saveWidget(var.plot, "variance.html", selfcontained=FALSE)
 
 #plot graph comparing PCs
 Xscores <- sample.pca$x 
@@ -130,7 +130,7 @@ scores15 <- plot_ly(Xscores, x=~PC1, y=~PC5, type="scatter", mode="markers", tex
 scores1 <- subplot(scores12, scores13, scores14, scores15, nrows=4, shareX =TRUE, shareY = TRUE)
 ggplotly(scores1)
 
-htmlwidgets::saveWidget(scores1, "scores1.html")
+htmlwidgets::saveWidget(scores1, "scores1.html", selfcontained=FALSE)
 
 #graph(s) showing PC2 vs 3,4,5
 scores23 <- plot_ly(Xscores, x=~PC2, y=~PC3, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
@@ -139,7 +139,7 @@ scores45 <- plot_ly(Xscores, x=~PC2, y=~PC5, type="scatter", mode="markers", tex
 scores2 <- subplot(scores23, scores34, scores45, nrows=3, shareX =TRUE, shareY = TRUE)
 ggplotly(scores2)
 
-htmlwidgets::saveWidget(scores2, "scores2.html")
+htmlwidgets::saveWidget(scores2, "scores2.html", selfcontained=FALSE)
 
 #graphs(s) showing PC3 vs 4,5
 scores34 <- plot_ly(Xscores, x=~PC3, y=~PC4, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
@@ -147,13 +147,13 @@ scores45 <- plot_ly(Xscores, x=~PC3, y=~PC5, type="scatter", mode="markers", tex
 scores3 <- subplot(scores34, scores45, nrows=2, shareX =TRUE, shareY = TRUE)
 ggplotly(scores3)
 
-htmlwidgets::saveWidget(scores3, "scores3.html")
+htmlwidgets::saveWidget(scores3, "scores3.html", selfcontained=FALSE)
 
 #graphs(s) showing PC4 vs PC5 
 scores4 <- plot_ly(Xscores, x=~PC4, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector)
 ggplotly(scores4)
 
-htmlwidgets::saveWidget(scores4, "scores4.html")
+htmlwidgets::saveWidget(scores4, "scores4.html", selfcontained=FALSE)
 
 #carry out tests to figure out top genes and for volcano plots
 biocLite("limma")
@@ -175,7 +175,7 @@ toptable <-topTable(fit1, sort.by="p", number=250)
 datatable(toptable)
 
 #save table
-htmlwidgets::saveWidget(toptable, "toptable.html")
+htmlwidgets::saveWidget(toptable, "toptable.html", selfcontained=FALSE)
 
 ##################
 #  VOLCANO PLOT  #
@@ -198,6 +198,6 @@ volcano <- plot_ly(toptable, x=~logFC, y=~lg, type="scatter", mode="markers", te
 ggplotly(volcano)
 
 #save volcano plot
-htmlwidgets::saveWidget(volcano, "volcanoplot.html")
+htmlwidgets::saveWidget(volcano, "volcanoplot.html", selfcontained=FALSE)
 
 #N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes. 
