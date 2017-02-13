@@ -1,14 +1,14 @@
 # INSTALL PACKAGES
-#install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
+install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
 library("plotly")
 
-#install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
+install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
 library("gplots")
 
-#install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
+install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
 library("dendextend")
 
-#install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
+install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
 library("DT")
 
 source("http://bioconductor.org/biocLite.R") 
@@ -16,7 +16,7 @@ library("limma")
 
 
 #import data
-sample <- read.table("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/Gene_FPKM_Sample.csv", header=TRUE, sep=",")
+sample <- read.table("Gene_FPKM_Sample.csv", header=TRUE, sep=",")
 
 #select gene names 
 geneNames <- as.character(sample$X)
@@ -150,7 +150,7 @@ ggplotly(scores3)
 htmlwidgets::saveWidget(scores3, "scores3.html")
 
 #graphs(s) showing PC4 vs PC5 
-scores4 <- plot_ly(Xscores, x=~PC4, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegened=TRUE)
+scores4 <- plot_ly(Xscores, x=~PC4, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector)
 ggplotly(scores4)
 
 htmlwidgets::saveWidget(scores4, "scores4.html")
@@ -184,7 +184,7 @@ htmlwidgets::saveWidget(toptable, "toptable.html")
 #test for top genes
 fit <-lmFit(sample, design)
 contrasts <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
-fit <-contrasts.fit(fit, contrasts)
+fit <-contrasts.fit(fit1, contrasts)
 fit <-eBayes(fit)
 
 #create table of top genes
@@ -200,4 +200,4 @@ ggplotly(volcano)
 #save volcano plot
 htmlwidgets::saveWidget(volcano, "volcanoplot.html")
 
-#N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes.
+#N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes. 
