@@ -1,14 +1,14 @@
 # INSTALL PACKAGES
-install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
+#install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
 library("plotly")
 
-install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
+#install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
 library("gplots")
 
-install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
+#install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
 library("dendextend")
 
-install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
+#install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
 library("DT")
 
 source("http://bioconductor.org/biocLite.R") 
@@ -16,7 +16,7 @@ library("limma")
 
 
 #import data
-sample <- read.table("Gene_FPKM_Sample.csv", header=TRUE, sep=",")
+sample <- read.table("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/Gene_FPKM_Sample.csv", header=TRUE, sep=",")
 
 #select gene names 
 geneNames <- as.character(sample$X)
