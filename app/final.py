@@ -51,8 +51,12 @@ def R_Downloads():
 # This displays a pdf of R analysis on the screen.
 @app.route("/return_file/")
 def returnFile():
-	return send_file("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/HCA.pdf", attachment_filename="HCA.pdf")
+	return send_file("/data/HCA.pdf", attachment_filename="HCA.pdf")
 
+# This displays a pdf of the heatmap on screen.
+@app.route("/return_heatmap/")
+def returnHeat():
+	return send_file("/data/heatmap.pdf", attachment_filename="Heatmap.pdf")
 
 #this route ask for input files control files and save in CTRL folder
 @app.route("/analyse/")
