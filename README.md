@@ -53,7 +53,7 @@ Main files and their functions:
   - final.py --> Contains all app routes to enable templates to show and imports individual software components.
   - BLAST.py --> Contains code for BLAST search and generation of output for R.
   - runner.py --> Required to run R commands within a python script. This was to enable embedding within flask framework.
-  - routput.R --> Contains code for R analysis of BLAST output.
+  - routputs.R --> Contains code for R analysis of BLAST output.
 
 We are working to improve the software at all times. Please feel free to leave feedback and recommendations. 
 
