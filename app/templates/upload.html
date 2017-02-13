@@ -3,6 +3,7 @@
 
 <!-- the block inserts the portion below in the specified region of the loayout. html file -->
 {%block content%}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,11 +16,11 @@
 	<form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
 	    <input type="file" name="file" accept="file" multiple>
 	    <input type="submit" value="send" color= "black">
-
 </form>
 </div>
 </body>
 </html>
 
 {% endblock %}
+
 <!-- insertion block ends here -->
