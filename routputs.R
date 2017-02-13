@@ -1,7 +1,4 @@
 # INSTALL PACKAGES
-#install.packages("pheatmap")
-#library("pheatmap")
-
 install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
 library("plotly")
 
@@ -124,11 +121,39 @@ htmlwidgets::saveWidget(var.plot, "variance.html")
 #plot graph comparing PCs
 Xscores <- sample.pca$x 
 Xscores <- as.data.frame(Xscores)
-scores <- plot_ly(Xscores,x=~PC1, y=~PC2, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=~classVector)
-ggplotly(scores)
 
-#save PC plot
-htmlwidgets::saveWidget(scores, "PCAscores.html")
+#graph(s) showing PC1 vs 2,3,4,5
+scores12 <- plot_ly(Xscores,x=~PC1, y=~PC2,  type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
+scores13 <- plot_ly(Xscores, x=~PC1, y=~PC3, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
+scores14 <- plot_ly(Xscores, x=~PC1, y=~PC4, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
+scores15 <- plot_ly(Xscores, x=~PC1, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
+scores1 <- subplot(scores12, scores13, scores14, scores15, nrows=4, shareX =TRUE, shareY = TRUE)
+ggplotly(scores1)
+
+htmlwidgets::saveWidget(scores1, "scores1.html")
+
+#graph(s) showing PC2 vs 3,4,5
+scores23 <- plot_ly(Xscores, x=~PC2, y=~PC3, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
+scores34 <- plot_ly(Xscores, x=~PC2, y=~PC4, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
+scores45 <- plot_ly(Xscores, x=~PC2, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
+scores2 <- subplot(scores23, scores34, scores45, nrows=3, shareX =TRUE, shareY = TRUE)
+ggplotly(scores2)
+
+htmlwidgets::saveWidget(scores2, "scores2.html")
+
+#graphs(s) showing PC3 vs 4,5
+scores34 <- plot_ly(Xscores, x=~PC3, y=~PC4, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
+scores45 <- plot_ly(Xscores, x=~PC3, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
+scores3 <- subplot(scores34, scores45, nrows=2, shareX =TRUE, shareY = TRUE)
+ggplotly(scores3)
+
+htmlwidgets::saveWidget(scores3, "scores3.html")
+
+#graphs(s) showing PC4 vs PC5 
+scores4 <- plot_ly(Xscores, x=~PC4, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegened=TRUE)
+ggplotly(scores4)
+
+htmlwidgets::saveWidget(scores4, "scores4.html")
 
 #carry out tests to figure out top genes and for volcano plots
 biocLite("limma")
@@ -165,8 +190,3 @@ datatable(toptable)
 
 #save table
 htmlwidgets::saveWidget(toptable, "toptable.html")
-
-
-
-
-
