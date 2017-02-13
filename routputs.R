@@ -160,27 +160,13 @@ biocLite("limma")
 design <-model.matrix(~0+pClass)
 
 #test for top genes
-fit <-lmFit(sample, design)
-contrasts <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
-fit <-contrasts.fit(fit, contrasts)
-fit <-eBayes(fit)
+fit1 <-lmFit(sample1, design)
+contrasts1 <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
+fit1 <-contrasts.fit(fit1, contrasts1)
+fit1 <-eBayes(fit1)
 
 #create table of top genes
-toptable <-topTable(fit, sort.by="p", number=250)
-
-#create log function for using volcano plot (see below)
-lg<- -log10(toptable$P.Value)
-
-##################
-#  VOLCANO PLOT  #
-##################
-
-volcano <- plot_ly(toptable, x=~logFC, y=~lg, type="scatter", mode="markers", text = ~paste('GENE: ', geneNames), marker=list(color="hotpink"))%>%
-  layout(xaxis=list(range=c(-2,2)), yaxis=list(title="-log10(P Value)"))
-ggplotly(volcano)
-
-#save volcano plot
-htmlwidgets::saveWidget(volcano, "volcanoplot.html")
+toptable <-topTable(fit1, sort.by="p", number=250)
 
 ########################
 #  TABLE OF TOP GENES  #
@@ -190,3 +176,28 @@ datatable(toptable)
 
 #save table
 htmlwidgets::saveWidget(toptable, "toptable.html")
+
+##################
+#  VOLCANO PLOT  #
+##################
+
+#test for top genes
+fit <-lmFit(sample, design)
+contrasts <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
+fit <-contrasts.fit(fit, contrasts)
+fit <-eBayes(fit)
+
+#create table of top genes
+toptable <-topTable(fit, sort.by="p", number=250)
+
+#create log function for using in volcano plot
+lg<- -log10(toptable$P.Value)
+
+volcano <- plot_ly(toptable, x=~logFC, y=~lg, type="scatter", mode="markers", text = ~paste('GENE: ', geneNames), marker=list(color="hotpink"))%>%
+  layout(xaxis=list(range=c(-2,2)), yaxis=list(title="-log10(P Value)"))
+ggplotly(volcano)
+
+#save volcano plot
+htmlwidgets::saveWidget(volcano, "volcanoplot.html")
+
+#N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes.
