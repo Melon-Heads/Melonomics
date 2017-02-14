@@ -8,7 +8,7 @@
 #imports python os package to enable access to the sub-modules such as os.path specifying file saving path
 import os
 #imports modules of flask that are required
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, send_file
 
 app = Flask(__name__)
 
@@ -43,6 +43,13 @@ def Blast(name=None):
 	print("Completed BLAST, waiting for Analysis!")
 	return render_template("Blast.html")
 
+#R analysis
+@app.route("/R_analysis/")
+def R_analysis (name=None):
+    import runner
+    print ("R is complete")
+    return redirect (url_for("R_Downloads"))
+
 # This shows a template which consists of a button to allow users to view R analysis.
 @app.route("/R_Downloads/")
 def R_Downloads():
@@ -64,7 +71,7 @@ def index():
     return render_template("upload.html")
 
 @app.route("/upload", methods=['POST'])
-def upload():
+def upload_1():
     #creates the CTRL folder in this path saves file
     target = os.path.join(APP__ROOT, 'data/CTRL')
     print(target)
@@ -83,8 +90,8 @@ def upload():
 
 #This route ask for input files for 8hrs infection files and saves in DS1 folder
 
-@app.route("/jss", methods=['POST'])
-def jss():
+@app.route("/upload_2", methods=['POST'])
+def upload_2():
     #creates the DS1 folder in this path and saves files
     target = os.path.join(APP__ROOT, 'data/DS1')
     print(target)
@@ -104,8 +111,8 @@ def jss():
 
 #This route ask for input files for 8hrs infection files and saves in DS2 folder in POST
 
-@app.route("/blast", methods=['POST'])
-def blast():
+@app.route("/upload_3", methods=['POST'])
+def upload_3():
     #create DS2 folder if not exist and save files
     target = os.path.join(APP__ROOT, 'data/DS2')
     print(target)
@@ -121,7 +128,7 @@ def blast():
         file.save(destination)
         #The uploaded files are then returned to the function with blast file
 
-    return "This will call on function where the analysis takes place"
+    return redirect(url_for("Blast"))
 
 #This is an alternative method of saving files that we may try later
 '''@app.route('/submit/', methods=['GET', 'POST'])
