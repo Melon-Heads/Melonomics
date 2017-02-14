@@ -1,15 +1,28 @@
 #!/usr/bin/env/ python
 
+#===============================================#
+# File Description: Carries out BLAST and post- #
+#                   BLAST processing functions. #
+#                                               #
+# Authors: Nadim, Modupeh, Maddy, Andrew        #
+#===============================================#
+
+
+# Note that all code specifying file paths may need to be altered.
+
+
+################################
+#      Importing Packages      #
+################################
+
 import sys, re, csv, os, glob
 
-# The following is for those who need to append biopython packages to the Python PATH:
+# If biopython packages need to be brought into the Python PATH:
 sys.path.append('/mnt/c/Users/Nadim/Downloads/biopython-1.68')
 
 import pandas as pd
 from Bio.Blast.Applications import NcbiblastnCommandline
 
-
-# Note that all code specifying file path will have to be adapted.
 
 
 ###########################
@@ -17,22 +30,22 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 ###########################
 
 
-# This script REQUIRES:
+# This script also REQUIRES:
 # --> BLAST+ (downloadable from: https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 # --> A BLAST database (using nt for nucleotides), downloadable from: ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/.
 # --> Biopython
 
-# If a database is downloaded, it must be formatted:
+# If a BLAST database is downloaded, it must be formatted:
 #              formatdb - i nt -p F -V
 # -p F [Format according to nucleotides]
 # -V [Verbose]
 
 
-# ------------------
-# | BLAST Function |
-# ------------------
+# ------------------ #
+# | BLAST Function | #
+# ------------------ #
 
-
+# This function constructs the BLAST function on command line.
 def fastaBLAST(fastaFile):
         blastn_cline = NcbiblastnCommandline(query=fastaFile, db="/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Scripts/nt", evalue=0.001, outfmt=6, out=fastaFile+"_Output.txt", max_target_seqs=1, num_threads=4)
         blastn_cline
@@ -40,33 +53,46 @@ def fastaBLAST(fastaFile):
         stdout, stderr = blastn_cline()
 
 
-# Parameters for blastall and command line blast:
-# --> -i or query [Input fasta file]
-# --> -d or db [Path to Database to compare against]
-# --> -p [Type of blast carried out (blastn for nucleotides)]
-# --> -b or max_target_seqs [Number of hits to show]
-# --> -m [Format of the output file (Non-command line: 7 = XML, 8 = Tabular; Command line = 5, 6 respectively)]
-# --> -o [Name of output file]
-# --> num_threads [Numbers of CPUs utilised for the search]
+# BLAST Parameters (these may differ when shown on command line):
+# --> -query [Input fasta file]
+# --> -db [Path to Database to compare against]
+# --> -evalue [E-Value threshold (set to 0.001)]
+# --> -max_target_seqs [Number of hits to show (set to 1)]
+# --> -outfmt [Format of the output file (Tabular = 6)]
+# --> -out [Name of output file]
+# --> -num_threads [Numbers of CPUs utilised for the search]
 
 
 
-# ------------------------------------------------------------
-# | Obtaining the Gene IDs and FPKM Values from BLAST Output |
-# ------------------------------------------------------------
+###################################
+#      Post-BLAST Processing      #
+###################################
 
 
-samDict = {} # This needs to be global to add multiple blast results.
-vecList = [] # A list to add the sample code for class vectors.
+# ------------------------------------------------------------ #
+# | Obtaining the Gene IDs and FPKM Values from BLAST Output | #
+# ------------------------------------------------------------ #
+
+
+# Here, dictionaries are utilised to correlate first gene IDs to FPKM values.
+# Then the sample name to the gene IDs and FPKM values.
+# This final dictionary is fed into pandas to generate a matrix.
+# The type of samples or sample code (e.g. 1 = healthy) are appended to a list.
+# This list is also input into the matrix to incorporate class vectors.
+
+
+samDict = {} # Dictionary for sample names (with their corresponding gene IDs and FPKM values).
+vecList = [] # A list for sample codes (class vectors).
 
 # Function to create dictionaries of the gene IDs and FPKM value per sample.
 def createDict(blastOut, sampleCode):
         global samDict, vecList
-        inputBlast = open(blastOut, "r") # Read in the file passed through the function.
+        inputBlast = open(blastOut, "r")
 
         # Lists to append gene IDs and FPKM values to.
         genIDs = []
         FPKMvals = []
+
 	# Append the sample code to the globally defined list.
 	vecList.append(sampleCode)
 
@@ -84,17 +110,21 @@ def createDict(blastOut, sampleCode):
 				
                 genAcc = [l[0] for l in genIDs] # Remove any lists within the gene ID list.
         
-	# Join the gene ID and corresponding FPKM values
+	# Join the gene ID and corresponding FPKM values.
 	genFPKM.update(zip(genAcc, FPKMvals))
 
-        # Join the gene ID and FPKM dictionary to a separate dictionary which specifies each sample.
+        # Join the gene ID and FPKM dictionary to samDict to specify each sample.
         samDict.update({blastOut: genFPKM})
+
 
 
 # ---------------------------------------------------------------------
 # | Creating a Sample, Gene ID and FPKM Matrix and Saving to CSV File |
 # ---------------------------------------------------------------------
 
+
+# Here samDict is changed to a data-frame/matrix..
+# CSV files are generated for R analysis.
 
 def dictToMatrix(dict):
 	
