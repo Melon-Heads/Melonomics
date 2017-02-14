@@ -1,3 +1,5 @@
+#clears working environment
+rm(list = ls())
 # INSTALL PACKAGES
 install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
 library("plotly")
@@ -16,7 +18,7 @@ library("limma")
 
 
 #import data
-sample <- read.table("Gene_FPKM_Sample.csv", header=TRUE, sep=",")
+sample <- read.table("/Users/modoupehbetts/Documents/Software_development/app/data/Gene_FPKM_Sample.csv", header=TRUE, sep=",")
 
 #select gene names 
 geneNames <- as.character(sample$X)
@@ -201,3 +203,5 @@ ggplotly(volcano)
 htmlwidgets::saveWidget(volcano, "volcanoplot.html", selfcontained=FALSE)
 
 #N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes. 
+
+#clears working environment
