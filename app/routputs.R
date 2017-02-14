@@ -2,7 +2,7 @@
 rm(list = ls())
 # INSTALL PACKAGES
 install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
-library("plotly")
+library("plotly") 
 
 install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
 library("gplots")
@@ -15,6 +15,9 @@ library("DT")
 
 source("http://bioconductor.org/biocLite.R") 
 library("limma")
+
+install.packages("RColorBrewer", repos="https://cran.ma.imperial.ac.uk/")
+library("RColorBrewer")
 
 
 #import data
@@ -55,11 +58,11 @@ colour[index3] <- "darkgreen"
 ##################################
 
 hc <- hclust(dist(t(sample1)))
-dend <- as.dendrogram(hc)
+dend <- as.dendrogram(hc, xlab="GROUP")
 colourCodes <- c(Zero="red", One="navy", Two="darkgreen")
 labels_colors(dend) <- colourCodes[pClass][order.dendrogram(dend)]
 pdf('HCA.pdf')
-plot(dend)
+plot(dend, xlab="GROUP", ylab="HEIGHT", col.axis = "blue")
 dev.off()
 
 
@@ -68,7 +71,7 @@ dev.off()
 #############
 
 pdf('heatmap.pdf')
-heatmap.2(sample1, bg=colour, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none",trace="none",cexCol=0.7, cex=0.7, colCol=colour)
+heatmap.2(sample1, bg=colour, col=colorRampPalette(brewer.pal(9,"Blues"))(100), colsep=1:ncol(sample1), rowsep=1:nrow(sample1), sepcolor="white", sepwidth = c(0.005,0.005), scale="row", key=T, keysize=1.2, density.info="none", trace="none",cexCol=1, cex=0.85, srtCol = 0, colCol=colour, xlab='GROUP', ylab='GENE', margins = c(3.2,8.6))
 dev.off()
 
 #########
@@ -119,6 +122,7 @@ ggplotly(var.plot)
 
 #save variance plot
 htmlwidgets::saveWidget(var.plot, "variance.html", selfcontained=FALSE)
+#htmlwidgets::shinyWidgetOutput(var.plot, "variance.html", width="100%", height="400px")
 
 #plot graph comparing PCs
 Xscores <- sample.pca$x 
@@ -158,42 +162,42 @@ ggplotly(scores4)
 htmlwidgets::saveWidget(scores4, "scores4.html", selfcontained=FALSE)
 
 #carry out tests to figure out top genes and for volcano plots
-biocLite("limma")
-design <-model.matrix(~0+pClass)
+design <- model.matrix(~0+pClass)
 
 #test for top genes
-fit1 <-lmFit(sample1, design)
-contrasts1 <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
-fit1 <-contrasts.fit(fit1, contrasts1)
-fit1 <-eBayes(fit1)
+fit1 <- lmFit(sample1, design)
+contrasts1 <- makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
+fit1 <- contrasts.fit(fit1, contrasts1)
+fit1 <- eBayes(fit1)
 
 #create table of top genes
-toptable <-topTable(fit1, sort.by="p", number=250)
+toptable <- topTable(fit1, sort.by="p", number=250)
 
 ########################
 #  TABLE OF TOP GENES  #
 ########################
 
 datatable(toptable)
+topgenes <- DT::datatable(toptable)
 
 #save table
-htmlwidgets::saveWidget(toptable, "toptable.html", selfcontained=FALSE)
+DT::saveWidget(topgenes, "toptable.html", selfcontained = FALSE)
 
 ##################
 #  VOLCANO PLOT  #
 ##################
 
 #test for top genes
-fit <-lmFit(sample, design)
-contrasts <-makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
-fit <-contrasts.fit(fit1, contrasts)
-fit <-eBayes(fit)
+fit <- lmFit(sample, design)
+contrasts <- makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
+fit <- contrasts.fit(fit, contrasts)
+fit <- eBayes(fit)
 
 #create table of top genes
 toptable <-topTable(fit, sort.by="p", number=250)
 
 #create log function for using in volcano plot
-lg<- -log10(toptable$P.Value)
+lg <- -log10(toptable$P.Value)
 
 volcano <- plot_ly(toptable, x=~logFC, y=~lg, type="scatter", mode="markers", text = ~paste('GENE: ', geneNames), marker=list(color="hotpink"))%>%
   layout(xaxis=list(range=c(-2,2)), yaxis=list(title="-log10(P Value)"))
@@ -204,4 +208,6 @@ htmlwidgets::saveWidget(volcano, "volcanoplot.html", selfcontained=FALSE)
 
 #N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes. 
 
+
 #clears working environment
+rm(list = ls())
