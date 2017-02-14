@@ -122,25 +122,25 @@ def dictToMatrix(dict):
 # The fasta files are sent to the BLAST function.
 # The BLAST output files are utilised to create a dictionary which will be used to make a matrix.
 
-os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/CTRL")
-#for file in glob.glob("*.fasta"):
-	#fastaBLAST(file)
+os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics_v2/mastermelon/app/data/CTRL")
+for file in glob.glob("*.fasta"):
+	fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	CTRLcode = 1
 	createDict(file, CTRLcode)
 
 
-os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/DS1")
-#for file in glob.glob("*.fasta"):
-	#fastaBLAST(file)
+os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics_v2/mastermelon/app/data/DS1")
+for file in glob.glob("*.fasta"):
+	fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	DS1code = 2
 	createDict(file, DS1code)
 
 
-os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/DS2")
-#for file in glob.glob("*.fasta"):
-        #fastaBLAST(file)
+os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics_v2/mastermelon/app/data/DS2")
+for file in glob.glob("*.fasta"):
+        fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	DS2code = 3
 	createDict(file, DS2code)
