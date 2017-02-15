@@ -1,17 +1,21 @@
-#clears working environment
-rm(list = ls())
-# INSTALL PACKAGES
+######################
+#  INSTALL PACKAGES  #
+######################
+
 install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
-library("plotly") 
+library("plotly") #(would be used, but interactive versions of plots not working on app)
+
+install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
+library("DT") #(would be used, but interactive versions of table not working on app)
 
 install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
 library("gplots")
 
+install.packages("ggplot2", repos="https://cran.ma.imperial.ac.uk/")
+library("ggplot2")
+
 install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
 library("dendextend")
-
-install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
-library("DT")
 
 source("http://bioconductor.org/biocLite.R") 
 library("limma")
@@ -19,39 +23,58 @@ library("limma")
 install.packages("RColorBrewer", repos="https://cran.ma.imperial.ac.uk/")
 library("RColorBrewer")
 
+#clear R environment
+rm(list = ls())
+
+
+####################
+#  START ANALYSIS  #
+####################
 
 #import data
-sample <- read.table("/Users/modoupehbetts/Documents/Software_development/app/data/Gene_FPKM_Sample.csv", header=TRUE, sep=",")
+sample <- read.table("Gene_FPKM_Sample.csv", header=TRUE, sep=",")
+
 
 #select gene names 
 geneNames <- as.character(sample$X)
+
 
 # select required data and convert to matrix
 cols <- ncol(sample)
 sample <- sample[,2:cols]
 sample <- as.matrix(sample)
 
+
 #edit row and column names to genes names and class vector 
 classVector <- as.character(sample[1,])
 rownames(sample) <- geneNames
 colnames(sample) <- classVector
 
+
 #remove first row of data (unnecessary)
 sample1 <- sample[-1,] #(keeping sample file with line of data too because volcano plot doesn't work without it)
 pClass <- as.factor(colnames(sample1))
 
+
+#select classes 
 levels(pClass)[levels(pClass)=="1"] <- "One"
 levels(pClass)[levels(pClass)=="2"] <- "Two"
 levels(pClass)[levels(pClass)=="3"] <- "Three"
 
+
+#index classes
 index1 <- which((pClass=="One")==TRUE)
 index2 <- which((pClass=="Two")==TRUE)
 index3 <- which((pClass=="Three")==TRUE)
 
+
+#add colour to classes
 colour <- NULL
 colour[index1] <- "red"
 colour[index2] <- "navy"
 colour[index3] <- "darkgreen"
+
+
 
 ##################################
 #  HIERACHICAL CLUSTER ANALYSIS  #
@@ -59,11 +82,12 @@ colour[index3] <- "darkgreen"
 
 hc <- hclust(dist(t(sample1)))
 dend <- as.dendrogram(hc, xlab="GROUP")
-colourCodes <- c(Zero="red", One="navy", Two="darkgreen")
-labels_colors(dend) <- colourCodes[pClass][order.dendrogram(dend)]
+colorCodes <- c(Zero="red", One="navy", Two="darkgreen")
+labels_colors(dend) <- colorCodes[pClass][order.dendrogram(dend)]
 pdf('HCA.pdf')
 plot(dend, xlab="GROUP", ylab="HEIGHT", col.axis = "blue")
 dev.off()
+
 
 
 #############
@@ -74,6 +98,8 @@ pdf('heatmap.pdf')
 heatmap.2(sample1, bg=colour, col=colorRampPalette(brewer.pal(9,"Blues"))(100), colsep=1:ncol(sample1), rowsep=1:nrow(sample1), sepcolor="white", sepwidth = c(0.005,0.005), scale="row", key=T, keysize=1.2, density.info="none", trace="none",cexCol=1, cex=0.85, srtCol = 0, colCol=colour, xlab='GROUP', ylab='GENE', margins = c(3.2,8.6))
 dev.off()
 
+
+
 #########
 #  PCA  #
 #########
@@ -82,26 +108,39 @@ dev.off()
 log.sample <- log(sample1+0.1) # +0.1 needed to log transform samples of equal to 0.
 sample.pca <- prcomp(t(log.sample), center = TRUE)
 
+
 #summarise PCA for further analysis
 s<-summary(sample.pca)
+
 
 #calculate cumulative variance
 cumVar <- s$importance[3,] * 100
 cumVar <- as.data.frame(cumVar)
 
+
 #calculate explained variance 
 expVar <- s$importance[2,] * 100
 expVar <- as.data.frame(expVar)
 
+
 #count for number of principle components
 no.rows <- nrow(expVar)
+
 
 #create data frame with all variance info, including column for number of components
 expVar["cumVar"] <- NA
 expVar["Component"] <- c(1:no.rows)
 expVar$cumVar <- cumVar$cumVar
+var.rows <- nrow(expVar)
 
-#plot combined variance graph using plotly
+
+
+#######################
+#  PCA VARIANCE PLOT  #
+#######################
+
+#interactive variance plot (if html had worked on app)
+#set x and y axis parameters
 x <- list(
   autotick=FALSE,
   tick0=0,
@@ -120,13 +159,32 @@ var.plot <- plot_ly(expVar, x=~Component)%>%
   layout(xaxis=x, yaxis=y,legend=list(x=0.7,y=0.15))
 ggplotly(var.plot)
 
-#save variance plot
-htmlwidgets::saveWidget(var.plot, "variance.html", selfcontained=FALSE)
-#htmlwidgets::shinyWidgetOutput(var.plot, "variance.html", width="100%", height="400px")
 
-#plot graph comparing PCs
+#save interactive variance plot 
+htmlwidgets::saveWidget(var.plot, "variance.html", selfcontained=FALSE)
+
+
+#STATIC VARIANCE PLOT (used on website)
+pdf('variance.pdf')
+ggplot(expVar, aes(1:var.rows)) +                   
+  geom_line(aes(y=expVar, colour="blue")) +  
+  geom_line(aes(y=cumVar, colour="hotpink")) +
+  xlab("Principal Component") + xlim(1,var.rows) + scale_x_continuous(breaks=c(1:var.rows)) +
+  ylab("Variance(%)") + ylim(0,100) + scale_y_continuous(breaks=c(0,10,20,30,40,50,60,70,80,90,100)) +
+  scale_colour_manual(values=c("hotpink"="hotpink", "blue"="blue"), labels=c("Cumulative Variance", "Explained Variance")) +
+  theme(legend.position = "top") + theme(legend.title = element_blank())
+dev.off()
+
+
+
+#####################
+#  PCA SCORES PLOT  #
+#####################
+
+#create data frame with PCA scores
 Xscores <- sample.pca$x 
 Xscores <- as.data.frame(Xscores)
+
 
 #graph(s) showing PC1 vs 2,3,4,5
 scores12 <- plot_ly(Xscores,x=~PC1, y=~PC2,  type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
@@ -138,6 +196,7 @@ ggplotly(scores1)
 
 htmlwidgets::saveWidget(scores1, "scores1.html", selfcontained=FALSE)
 
+
 #graph(s) showing PC2 vs 3,4,5
 scores23 <- plot_ly(Xscores, x=~PC2, y=~PC3, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
 scores34 <- plot_ly(Xscores, x=~PC2, y=~PC4, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
@@ -147,6 +206,7 @@ ggplotly(scores2)
 
 htmlwidgets::saveWidget(scores2, "scores2.html", selfcontained=FALSE)
 
+
 #graphs(s) showing PC3 vs 4,5
 scores34 <- plot_ly(Xscores, x=~PC3, y=~PC4, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=TRUE)
 scores45 <- plot_ly(Xscores, x=~PC3, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector, showlegend=FALSE)
@@ -155,14 +215,30 @@ ggplotly(scores3)
 
 htmlwidgets::saveWidget(scores3, "scores3.html", selfcontained=FALSE)
 
+
 #graphs(s) showing PC4 vs PC5 
 scores4 <- plot_ly(Xscores, x=~PC4, y=~PC5, type="scatter", mode="markers", text=~paste('GROUP: ', classVector), color=classVector)
 ggplotly(scores4)
 
 htmlwidgets::saveWidget(scores4, "scores4.html", selfcontained=FALSE)
 
+
+#STATIC PCA SCORES PLOT 
+par(mfrow=c(5,5))
+xsub <- Xscores[1:5]
+pdf('PCA.pdf')
+pairs(xsub, bg=colour, pch=21, cex=0.7, cex.lab=0.7, cex.axis = 0.7)
+dev.off()
+
+
+
+#########################
+#  TESTS FOR TOP GENES  #
+#########################
+
 #carry out tests to figure out top genes and for volcano plots
 design <- model.matrix(~0+pClass)
+
 
 #test for top genes
 fit1 <- lmFit(sample1, design)
@@ -170,18 +246,31 @@ contrasts1 <- makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design
 fit1 <- contrasts.fit(fit1, contrasts1)
 fit1 <- eBayes(fit1)
 
+
 #create table of top genes
-toptable <- topTable(fit1, sort.by="p", number=250)
+toptable <- topTable(fit1, sort.by="p", number=20)
+
+
 
 ########################
 #  TABLE OF TOP GENES  #
 ########################
 
+#Interactive plot
 datatable(toptable)
 topgenes <- DT::datatable(toptable)
 
-#save table
+#save interactive table
 DT::saveWidget(topgenes, "toptable.html", selfcontained = FALSE)
+
+
+#STATIC TABLE (used on app)
+par(mfrow=c(1,1))
+pdf('toptable.pdf')
+textplot(toptable, valign="top", cmar=0.68)
+dev.off()
+
+
 
 ##################
 #  VOLCANO PLOT  #
@@ -193,12 +282,16 @@ contrasts <- makeContrasts(pClassOne - pClassTwo - pClassThree, levels = design)
 fit <- contrasts.fit(fit, contrasts)
 fit <- eBayes(fit)
 
+
 #create table of top genes
 toptable <-topTable(fit, sort.by="p", number=250)
+
 
 #create log function for using in volcano plot
 lg <- -log10(toptable$P.Value)
 
+
+#Interactive Volcano plot
 volcano <- plot_ly(toptable, x=~logFC, y=~lg, type="scatter", mode="markers", text = ~paste('GENE: ', geneNames), marker=list(color="hotpink"))%>%
   layout(xaxis=list(range=c(-2,2)), yaxis=list(title="-log10(P Value)"))
 ggplotly(volcano)
@@ -206,8 +299,13 @@ ggplotly(volcano)
 #save volcano plot
 htmlwidgets::saveWidget(volcano, "volcanoplot.html", selfcontained=FALSE)
 
+
+#STATIC VOLCANO PLOT (used in app)
+pdf('volcano.pdf')
+ggplot(toptable, aes(x=logFC, y=-log10(P.Value))) + geom_point(colour="cornflowerblue") + xlim(-2,2)
+dev.off()
+
 #N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes. 
 
-
-#clears working environment
+#clear R environment
 rm(list = ls())
