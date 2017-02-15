@@ -32,7 +32,7 @@ rm(list = ls())
 ####################
 
 #import data
-sample <- read.table("Gene_FPKM_Sample.csv", header=TRUE, sep=",")
+sample <- read.table("/Users/modoupehbetts/Documents/Software_development/app/data/Gene_FPKM_Sample.csv", header=TRUE, sep=",")
 
 
 #select gene names 
