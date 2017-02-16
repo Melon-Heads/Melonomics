@@ -23,6 +23,8 @@ library("RColorBrewer")
 #clear R environment
 rm(list = ls())
 
+#setting working directory
+setwd(~/ ) 
 
 ####################
 #  START ANALYSIS  #
