@@ -127,21 +127,18 @@ def createDict(blastOut, sampleCode):
 # CSV files are generated for R analysis.
 
 def dictToMatrix(dict):
-	
-	# A normal matrix from the dictionary formed.
-        mat = pd.DataFrame(dict)
-	matCSV = mat.fillna(0) # This converts empty cells to display 0.
-	
+	global vecList
+
 	# Another matrix with the class vector mentioned in the second row.
 	# This was added as a list, which was formed in the createDict function.		
-	vec = pd.DataFrame(dict)
-        vec.loc[1] = vecList	
-	vec = vec.sort()
-	vecCSV = vec.fillna(0)
+	mat = pd.DataFrame(dict)
+        mat.loc[0] = vecList	
+	mat = mat.sort()
+	matCSV = mat.fillna(0) # This converts all empty cells to display 0.
 
 	# Create the CSV files.
         matCSV.to_csv('/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/Gene_FPKM_Sample.csv')
-	vecCSV.to_csv('/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/Class_Vector.csv')
+
 
 
 # ===================================================================== #
