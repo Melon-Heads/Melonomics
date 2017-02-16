@@ -16,16 +16,16 @@ app = Flask(__name__)
 
 APP__ROOT = os.path.dirname(os.path.abspath(__file__))
 
-############################################################################
+######################## Routes to main Pages in Application############################
 
-#this returns the home page which is templated 
+#this returns the home page which is templated in INDEX.html and saved in templates folder
 @app.route('/')
 def home():
 	return render_template ('INDEX.html')
 
 
                                                     
-#route for about us page
+#route for about_us page which has a link on the home html. this renders the aboutus.html file save in templates folder
 @app.route('/about/')
 def about():
 	return render_template ('ABOUTUS.html')
@@ -51,24 +51,25 @@ def error(e):
 @app.route("/Blast/")
 def Blast(name=None):
 	import BLAST
-	print("Completed BLAST, waiting for Analysis!")
-	return redirect (url_for("R_Downloads"))
+	#print("Completed BLAST, waiting for Analysis!")
+	return redirect (url_for("R_analysis"))
 
 
 
 #R analysis: This imports the runner.py file which invokes routput.R (the r analysis )of our files
-#
+#runner.py uses the subprocess to call on the routput.R script
+#after the running the script returns to R_Downloads route where results can be displayed
 @app.route("/R_analysis/")
 def R_analysis (name=None):
     import runner
-    print ("R is complete")
+    #print ("R is complete")
     return redirect (url_for("R_Downloads"))
 
 
 
 
 # This shows a template which consists of a button to allow users to view R analysis.
-@app.route("/R_Downloads/")
+@app.route("/R_results/")
 def R_Downloads():
 	return render_template("Rdownloads.html")
 
@@ -78,7 +79,7 @@ def R_Downloads():
 @app.route("/return_file/")
 def returnFile():
     try:
-	   return send_file("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/HCA.pdf", attachment_filename="HCA.pdf")
+	   return send_file("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/HCA.pdf", attachment_filename="HCA.pdf")
     except Exception as e:
         return str(e)
 
@@ -87,7 +88,7 @@ def returnFile():
 # This displays a pdf of the heatmap on screen.
 @app.route("/heatmap/")
 def heatmap():
-	   return send_file("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/heatmap.pdf", attachment_filename="heatmap.pdf")
+	   return send_file("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/heatmap.pdf", attachment_filename="heatmap.pdf")
     
 
 #################################Routes for HTML interactive plots############################################
@@ -95,7 +96,7 @@ def heatmap():
 @app.route('/scores1/')
 def scores1():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "scores1.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores1.html")
     except Exception as e:
         return redirect (url_for("error"))
 @app.route('/scores2/')
@@ -103,14 +104,14 @@ def scores1():
 
 def scores2():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "scores2.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores2.html")
     except Exception as e:
         return str(e)
 
 @app.route('/scores3/')
 def scores3():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "scores3.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores3.html")
     except Exception as e:
         return redirect (url_for("error"))
 
@@ -118,7 +119,7 @@ def scores3():
 @app.route('/scores4/')
 def scores4():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "scores4.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores4.html")
     except Exception as e:
         return str(e)
 
@@ -126,77 +127,90 @@ def scores4():
 @app.route('/variance/')
 def variance():
     try:    
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "variance.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "variance.html")
     except Exception as e:
         return str(e)
 
 @app.route('/volcanoplot/')
 def volcanoplot():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "volcanoplot.html")            
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "volcanoplot.html")            
     except Exception as e:
         return str(e)
 
 @app.route('/toptable/')
 def toptable():
-    return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/", "toptable.html")
+    return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "toptable.html")
 
 ####################################Routes for JavaScript of HTML R Outputs##########################################
+# in order to properly properly call on the interactive plots we have to also call the folder containing the JavaScripts
 
+#fetches the Java script for the scores1
 @app.route('/scores1/<path:path>')
 def scores_1(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
+
+#fetches the Java script for the scores2
 @app.route('/scores2/<path:path>')
 def scores_2(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
+
+#fetches the Java script for the scores3
 @app.route('/scores3/<path:path>')
 def scores_3(path):
     try:    
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
+
+#fetches the Java script for the scores4
 @app.route('/scores4/<path:path>')
 def scores_4(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
+
+#fetches the Java script for the toptable
 @app.route('/toptable/<path:path>')
 def top_table(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
+
+#fetches the Java script for the variance
 @app.route('/variance/<path:path>')
 def va_riance(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
 
+#fetches the Java script for the volcanoplot
 
 @app.route('/volcanoplot/<path:path>')
 def volcano_plot(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
     except Exception as e:
         return str(e)
 
 
 
-###############################################################################################
+############################## FILE UPLOADING ###########################################
 #this route ask for input files control files and save in CTRL folder
 @app.route("/analyse/")
 def index():
@@ -223,10 +237,7 @@ def upload_1():
     return render_template("upload2.html")
 
 #This route ask for input files for 8hrs infection files and saves in DS1 folder
-
-
-
-
+# and returns user to next upload form
 
 @app.route("/upload_2", methods=['POST'])
 def upload_2():
@@ -250,6 +261,7 @@ def upload_2():
 
 
 #This route ask for input files for 8hrs infection files and saves in DS2 folder in POST
+# and returns user to next upload form
 
 @app.route("/upload_3", methods=['POST'])
 def upload_3():
@@ -273,27 +285,9 @@ def upload_3():
 
 ###########################################################################
 
-#This is an alternative method of saving files that we may try later
-#need to 
-'''@app.route('/submit/', methods=['GET', 'POST'])
-def submit():
-	if request.method == 'POST':
-		fasta = request.form['fasta']
 
-		return render_template('fasta.html',title='Submit', fasta=fasta)
-
-	return render_template('form.html')
-
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
-	if request.method =='POST' and text in request.files:
-		filename=text.save(request.files['text'])
-		return filename
-	return render_template ('uploads.html')'''
-
-
-
+#runs application on default IP: 127.0.0.1:5000
+#debug=True enables debugging
 							
 if __name__ == '__main__':
 	app.run (debug=True)
