@@ -3,16 +3,13 @@
 ######################
 
 install.packages("plotly", repos="https://cran.ma.imperial.ac.uk/")
-library("plotly") #(would be used, but interactive versions of plots not working on app)
+library("plotly")
 
 install.packages("DT", repos="https://cran.ma.imperial.ac.uk/")
-library("DT") #(would be used, but interactive versions of table not working on app)
+library("DT")
 
 install.packages("gplots", repos="https://cran.ma.imperial.ac.uk/")
 library("gplots")
-
-install.packages("ggplot2", repos="https://cran.ma.imperial.ac.uk/")
-library("ggplot2")
 
 install.packages("dendextend", repos="https://cran.ma.imperial.ac.uk/")
 library("dendextend")
@@ -139,7 +136,7 @@ var.rows <- nrow(expVar)
 #  PCA VARIANCE PLOT  #
 #######################
 
-#interactive variance plot (if html had worked on app)
+#Interactive Variance Plot
 #set x and y axis parameters
 x <- list(
   autotick=FALSE,
@@ -162,18 +159,6 @@ ggplotly(var.plot)
 
 #save interactive variance plot 
 htmlwidgets::saveWidget(var.plot, "variance.html", selfcontained=FALSE)
-
-
-#STATIC VARIANCE PLOT (used on website)
-pdf('variance.pdf')
-ggplot(expVar, aes(1:var.rows)) +                   
-  geom_line(aes(y=expVar, colour="blue")) +  
-  geom_line(aes(y=cumVar, colour="hotpink")) +
-  xlab("Principal Component") + xlim(1,var.rows) + scale_x_continuous(breaks=c(1:var.rows)) +
-  ylab("Variance(%)") + ylim(0,100) + scale_y_continuous(breaks=c(0,10,20,30,40,50,60,70,80,90,100)) +
-  scale_colour_manual(values=c("hotpink"="hotpink", "blue"="blue"), labels=c("Cumulative Variance", "Explained Variance")) +
-  theme(legend.position = "top") + theme(legend.title = element_blank())
-dev.off()
 
 
 
@@ -223,14 +208,6 @@ ggplotly(scores4)
 htmlwidgets::saveWidget(scores4, "scores4.html", selfcontained=FALSE)
 
 
-#STATIC PCA SCORES PLOT 
-par(mfrow=c(5,5))
-xsub <- Xscores[1:5]
-pdf('PCA.pdf')
-pairs(xsub, bg=colour, pch=21, cex=0.7, cex.lab=0.7, cex.axis = 0.7)
-dev.off()
-
-
 
 #########################
 #  TESTS FOR TOP GENES  #
@@ -256,19 +233,12 @@ toptable <- topTable(fit1, sort.by="p", number=20)
 #  TABLE OF TOP GENES  #
 ########################
 
-#Interactive plot
+#Interactive top genes table
 datatable(toptable)
 topgenes <- DT::datatable(toptable)
 
 #save interactive table
 DT::saveWidget(topgenes, "toptable.html", selfcontained = FALSE)
-
-
-#STATIC TABLE (used on app)
-par(mfrow=c(1,1))
-pdf('toptable.pdf')
-textplot(toptable, valign="top", cmar=0.68)
-dev.off()
 
 
 
@@ -299,11 +269,6 @@ ggplotly(volcano)
 #save volcano plot
 htmlwidgets::saveWidget(volcano, "volcanoplot.html", selfcontained=FALSE)
 
-
-#STATIC VOLCANO PLOT (used in app)
-pdf('volcano.pdf')
-ggplot(toptable, aes(x=logFC, y=-log10(P.Value))) + geom_point(colour="cornflowerblue") + xlim(-2,2)
-dev.off()
 
 #N.B. tests for top genes were done twice because editted data set did not work for volcano plot, while uneditted version produced an innaccurate datatable for top genes. 
 
