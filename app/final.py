@@ -96,7 +96,7 @@ def heatmap():
 @app.route('/scores1/')
 def scores1():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores1.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "scores1.html")
     except Exception as e:
         return redirect (url_for("error"))
 @app.route('/scores2/')
@@ -104,14 +104,14 @@ def scores1():
 
 def scores2():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores2.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "scores2.html")
     except Exception as e:
         return str(e)
 
 @app.route('/scores3/')
 def scores3():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores3.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "scores3.html")
     except Exception as e:
         return redirect (url_for("error"))
 
@@ -119,7 +119,7 @@ def scores3():
 @app.route('/scores4/')
 def scores4():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "scores4.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "scores4.html")
     except Exception as e:
         return str(e)
 
@@ -127,14 +127,14 @@ def scores4():
 @app.route('/variance/')
 def variance():
     try:    
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "variance.html")
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "variance.html")
     except Exception as e:
         return str(e)
 
 @app.route('/volcanoplot/')
 def volcanoplot():
     try:
-        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data", "volcanoplot.html")            
+        return send_from_directory ("/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/", "volcanoplot.html")            
     except Exception as e:
         return str(e)
 
@@ -149,7 +149,7 @@ def toptable():
 @app.route('/scores1/<path:path>')
 def scores_1(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
@@ -158,7 +158,7 @@ def scores_1(path):
 @app.route('/scores2/<path:path>')
 def scores_2(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
@@ -167,7 +167,7 @@ def scores_2(path):
 @app.route('/scores3/<path:path>')
 def scores_3(path):
     try:    
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
@@ -176,7 +176,7 @@ def scores_3(path):
 @app.route('/scores4/<path:path>')
 def scores_4(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
@@ -185,7 +185,7 @@ def scores_4(path):
 @app.route('/toptable/<path:path>')
 def top_table(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
@@ -194,7 +194,7 @@ def top_table(path):
 @app.route('/variance/<path:path>')
 def va_riance(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
@@ -204,7 +204,7 @@ def va_riance(path):
 @app.route('/volcanoplot/<path:path>')
 def volcano_plot(path):
     try:
-        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data', path)
+        return send_from_directory('/Users/modoupehbetts/Documents/Software_development/mastermelon/app/data/', path)
     except Exception as e:
         return str(e)
 
