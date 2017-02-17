@@ -21,6 +21,7 @@ import sys, re, csv, os, glob
 sys.path.append('/mnt/c/Users/Nadim/Downloads/biopython-1.68')
 
 import pandas as pd
+from Bio import SearchIO
 from Bio.Blast.Applications import NcbiblastnCommandline
 
 
@@ -87,7 +88,7 @@ vecList = [] # A list for sample codes (class vectors).
 # Function to create dictionaries of the gene IDs and FPKM value per sample.
 def createDict(blastOut, sampleCode):
         global samDict, vecList
-        inputBlast = open(blastOut, "r")
+        #inputBlast = open(blastOut, "r")
 
         # Lists to append gene IDs and FPKM values to.
         genIDs = []
@@ -98,20 +99,25 @@ def createDict(blastOut, sampleCode):
 
         # Dictionary of gene and FPKM values.
         genFPKM = {}
+	
+	qresults = SearchIO.parse(blastOut, 'blast-tab')
+	for qresult in qresults:
+		query = qresult.id
+		genes = qresult.hits
 
-        for word in inputBlast:
-                getGen = re.findall('[a-zA-Z]\w\w+\.\w+', str(word)) # Regular expression used to obtain the gene IDs.
-                genIDs.append(getGen)
+		getGen = re.findall('\w+\_\d+', str(genes))
+		getFPKM = re.findall('\d+\.\d+', str(query))
 
-		m = re.match(r"asmbl_\d+;(\d+\.\d+)", str(word)) # Regular expression to obtain the FPKM values.
-		if m:
-			getFPKM = m.group(1)
-			FPKMvals.append(getFPKM)
-				
-                genAcc = [l[0] for l in genIDs] # Remove any lists within the gene ID list.
+		genIDs.append(getGen)
+		FPKMvals.append(getFPKM)
+
+	genIDs = filter(None, genIDs) # Ensures that there are no empty entries.
+
+        genAcc = [l[0] for l in genIDs] # Remove any lists within the gene ID list.
+	FPKM = [l[0] for l in FPKMvals]	
         
 	# Join the gene ID and corresponding FPKM values.
-	genFPKM.update(zip(genAcc, FPKMvals))
+	genFPKM.update(zip(genAcc, FPKM))
 
         # Join the gene ID and FPKM dictionary to samDict to specify each sample.
         samDict.update({blastOut: genFPKM})
@@ -137,7 +143,7 @@ def dictToMatrix(dict):
 	matCSV = mat.fillna(0) # This converts all empty cells to display 0.
 
 	# Create the CSV files.
-        matCSV.to_csv('/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics/flask/venv/data/Gene_FPKM_Sample.csv')
+        matCSV.to_csv('/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/mastermelon/app/data/Gene_FPKM_Sample.csv')
 
 
 
@@ -149,7 +155,7 @@ def dictToMatrix(dict):
 # The fasta files are sent to the BLAST function.
 # The BLAST output files are utilised to create a dictionary which will be used to make a matrix.
 
-os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics_v2/mastermelon/app/data/CTRL")
+os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/mastermelon/app/data/CTRL")
 for file in glob.glob("*.fasta"):
 	fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
@@ -157,7 +163,7 @@ for file in glob.glob("*Output.txt"):
 	createDict(file, CTRLcode)
 
 
-os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics_v2/mastermelon/app/data/DS1")
+os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/mastermelon/app/data/DS1")
 for file in glob.glob("*.fasta"):
 	fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
@@ -165,9 +171,9 @@ for file in glob.glob("*Output.txt"):
 	createDict(file, DS1code)
 
 
-os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/Melonomics_v2/mastermelon/app/data/DS2")
+os.chdir("/mnt/c/Users/Nadim/Documents/QMUL_Level7/Group_Software_Project/mastermelon/app/data/DS2")
 for file in glob.glob("*.fasta"):
-        fastaBLAST(file)
+	fastaBLAST(file)
 for file in glob.glob("*Output.txt"):
 	DS2code = 3
 	createDict(file, DS2code)
