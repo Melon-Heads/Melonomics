@@ -88,7 +88,6 @@ vecList = [] # A list for sample codes (class vectors).
 # Function to create dictionaries of the gene IDs and FPKM value per sample.
 def createDict(blastOut, sampleCode):
         global samDict, vecList
-        #inputBlast = open(blastOut, "r")
 
         # Lists to append gene IDs and FPKM values to.
         genIDs = []
@@ -99,7 +98,9 @@ def createDict(blastOut, sampleCode):
 
         # Dictionary of gene and FPKM values.
         genFPKM = {}
+
 	
+	# Parse the gene IDs and FPKM values and add them to a dictionary:	
 	qresults = SearchIO.parse(blastOut, 'blast-tab')
 	for qresult in qresults:
 		query = qresult.id
